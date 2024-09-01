@@ -1,3 +1,5 @@
+import { formatCurrency } from "../utils/money.js";
+
 //Don't use this hardcoded dummy products array. Instead fetch from the api.
 export const productsObsolete = [
   {
@@ -660,6 +662,34 @@ export const productsObsolete = [
   }
 ];
 
+class Product{
+  id;
+  image;
+  name;
+  rating;
+  priceCents;
+
+  constructor(productDetails){
+    this.id = productDetails.id;
+    this.image = productDetails.image;
+    this.name = productDetails.name;
+    this.rating = productDetails.rating;
+    this.priceCents = productDetails.priceCents;
+  }
+
+  getRatingStarsUrl(){
+    return `images/ratings/rating-${this.rating.stars * 10}.png`;
+  }
+
+  getRatingCount(){
+    return this.rating.count;
+  }
+
+  getPrice(){    
+    return formatCurrency(this.priceCents);
+  }
+}
+
 export let products = loadFromStorage();
 
 function loadFromStorage(){
@@ -680,7 +710,12 @@ export async function getProducts(){
       throw new Error(`Response Status: ${response.status}`);
     }
 
-    products = await response.json();
+    const productsData = await response.json();
+
+    products = productsData.map(productDetails => {
+      return new Product(productDetails);
+    });
+    
     saveToStorage();
   } catch (error) {
     console.log(error.message);

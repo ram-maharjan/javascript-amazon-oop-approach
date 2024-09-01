@@ -1,6 +1,18 @@
 import { getDeliveryOption } from "./deliveryOptions.js";
 import { getProduct } from "./products.js";
 
+class CartModel{
+    productId;
+    quantity;
+    deliveryOptionId;
+
+    constructor(cartModelDetails){
+        this.productId = cartModelDetails.productId;
+        this.quantity = cartModelDetails.quantity;
+        this.deliveryOptionId = cartModelDetails.deliveryOptionId; 
+    }
+}
+
 export const cart = loadFromStorage();
 
 function loadFromStorage(){
@@ -17,11 +29,11 @@ function getCartItem(productId){
 
 export function addToCart(productId, quantity){
     const matchingItem = getCartItem(productId);
-    matchingItem ? matchingItem.quantity += quantity : cart.push({
+    matchingItem ? matchingItem.quantity += quantity : cart.push(new CartModel({
         productId,
         quantity,
         deliveryOptionId: '1'
-    });
+    }));
     saveToStorage();
 }
 
